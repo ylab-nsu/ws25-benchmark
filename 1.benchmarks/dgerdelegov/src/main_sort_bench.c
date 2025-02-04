@@ -2,29 +2,50 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define ARRAY_SIZE 1000
-#define SEED 50
+#include <time.h>
 
 static inline void merge(int32_t array[], size_t left, size_t middle,
                          size_t right);
 static inline void mergeSort(int32_t array[], size_t left, size_t right);
+int compare(const void *a, const void *b);
 
-int main() {
-    int32_t *array = malloc(ARRAY_SIZE * sizeof(int32_t));
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        printf(
+            "Использование: %s <размер массива> <сортировка>"
+            " (m - mergesort; q - qsort), <seed> (-1 - случайный)\n",
+            argv[0]);
+        return 1;
+    }
+
+    uint32_t size = (uint32_t)atoi(argv[1]);
+    if (size == 0) {
+        printf("Ошибка: размер массива должен быть больше 0\n");
+        return 1;
+    }
+
+    int32_t *array = malloc(size * sizeof(int32_t));
     if (!array) {
         printf("Ошибка: недостаточно памяти\n");
         return 1;
     }
 
-    // Заполняем массив случайными числами (фиксируем seed для
-    // воспроизводимости)
-    srand(SEED);
-    for (size_t i = 0; i < ARRAY_SIZE; i++) {
+    int seed = atoi(argv[3]);
+    srand(seed == -1 ? (unsigned int)time(NULL) : (unsigned int)seed);
+
+    for (size_t i = 0; i < size; i++) {
         array[i] = (int32_t)(rand() % 1000000);
     }
 
-    mergeSort(array, 0, ARRAY_SIZE - 1);
+    if (strcmp(argv[2], "m") == 0) {
+        mergeSort(array, 0, size - 1);
+    } else if (strcmp(argv[2], "q") == 0) {
+        qsort(array, (size_t)size, sizeof(array[0]), compare);
+    } else {
+        printf("Ошибка: укажите 'm' для mergesort или 'q' для qsort\n");
+        free(array);
+        return 1;
+    }
 
     free(array);
     return 0;
@@ -89,4 +110,10 @@ static inline void mergeSort(int32_t array[], size_t left, size_t right) {
         mergeSort(array, middle + 1, right);
         merge(array, left, middle, right);
     }
+}
+
+// Функция сравнения для qsort()
+int compare(const void *a, const void *b) {
+    int32_t x = *(const int32_t *)a, y = *(const int32_t *)b;
+    return (x > y) - (x < y);
 }
