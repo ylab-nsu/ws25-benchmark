@@ -46,7 +46,7 @@ double fmsub (double d, double a, double b, double c) {
 
 int main(int argc, char** argv) {
 	if (argc != 2) {
-		printf("usage: main 1-fmadd; 2 = fmsub; 3 = fmadd4; 4 = fmsub4\n");
+		printf("usage: main 1-fmadd; 2 = fmsub\n");
 		exit(1);
 	}
 	
