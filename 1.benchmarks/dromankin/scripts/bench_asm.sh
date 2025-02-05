@@ -10,4 +10,3 @@ else
 	cat out2.txt | cut -d"s" -f1 >> out3fmsub_asm.txt
 fi
 done
-#rm out3.txt
