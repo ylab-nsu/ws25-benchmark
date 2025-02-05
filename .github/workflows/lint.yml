@@ -1,0 +1,28 @@
+name: Linter
+
+on: [pull_request]
+
+jobs:
+  cpp-linter:
+    name: Lint code
+    runs-on: ubuntu-latest
+    permissions: 
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cpp-linter/cpp-linter-action@main
+        id: linter
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: 'file'  # Use .clang-format config file. 
+          tidy-checks: '' # Use .clang-tidy config file. 
+          file-annotations: false
+          files-changed-only: false
+          thread-comments: false
+          step-summary: true
+
+      - name: Fail workflow
+        if: steps.linter.outputs.checks-failed > 0
+        run: exit 1
