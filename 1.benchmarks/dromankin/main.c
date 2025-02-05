@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-double fmadd(volatile double d, double a, double b, double c) {
-    int32_t m = 100000000;
+double fmadd(int m, volatile double d, double a, double b, double c) {
     for (int32_t i = 0; i < m; i++) {
         d = a + b * c;
         d = a + b * c;
@@ -20,8 +19,7 @@ double fmadd(volatile double d, double a, double b, double c) {
     return d;
 }
 
-double fmsub(volatile double d, double a, double b, double c) {
-    int32_t m = 1000000000;
+double fmsub(int m, volatile double d, double a, double b, double c) {
     for (int32_t i = 0; i < m; i++) {
         d = a - b * c;
         d = a - b * c;
@@ -38,13 +36,15 @@ double fmsub(volatile double d, double a, double b, double c) {
 }
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
+    if (argc != 3) {
         printf("usage: main 1-fmadd; 2 = fmsub\n");
         exit(1);
     }
 
     int32_t arg = 0;
     arg = atoi(argv[1]);
+    volatile int m = 0;
+    m = atoi(argv[2]);
     volatile double a, b, c, d;
     a = 4.0f;
     b = 1.5f;
@@ -53,10 +53,10 @@ int main(int argc, char** argv) {
 
     switch (arg) {
         case 1:
-            a = fmadd(d, a, b, c);
+            a = fmadd(m, d, a, b, c);
             break;
         case 2:
-            a = fmsub(d, a, b, c);
+            a = fmsub(m, d, a, b, c);
             break;
     }
 
