@@ -6,13 +6,13 @@
 #define SEED 50
 
 // Функция сравнения для qsort()
-int compare(const void *a, const void *b) {
-    int32_t x = *(const int32_t *)a, y = *(const int32_t *)b;
+int compare(const void* a, const void* b) {
+    int32_t x = *(const int32_t*)a, y = *(const int32_t*)b;
     return (x > y) - (x < y);
 }
 
 int main() {
-    int32_t *array = malloc(ARRAY_SIZE * sizeof(int32_t));
+    int32_t* array = malloc(ARRAY_SIZE * sizeof(int32_t));
     if (!array) {
         printf("Ошибка: недостаточно памяти\n");
         return 1;

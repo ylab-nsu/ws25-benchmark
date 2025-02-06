@@ -11,7 +11,7 @@ static inline void merge(int32_t array[], size_t left, size_t middle,
 static inline void mergeSort(int32_t array[], size_t left, size_t right);
 
 int main() {
-    int32_t *array = malloc(ARRAY_SIZE * sizeof(int32_t));
+    int32_t* array = malloc(ARRAY_SIZE * sizeof(int32_t));
     if (!array) {
         printf("Ошибка: недостаточно памяти\n");
         return 1;
@@ -42,8 +42,8 @@ static inline void merge(int32_t array[], size_t left, size_t middle,
     size_t leftSize = middle - left + 1;
     size_t rightSize = right - middle;
 
-    int32_t *leftArray = malloc(leftSize * sizeof(int32_t));
-    int32_t *rightArray = malloc(rightSize * sizeof(int32_t));
+    int32_t* leftArray = malloc(leftSize * sizeof(int32_t));
+    int32_t* rightArray = malloc(rightSize * sizeof(int32_t));
 
     if (!leftArray || !rightArray) {
         printf("Ошибка: недостаточно памяти при слиянии\n");

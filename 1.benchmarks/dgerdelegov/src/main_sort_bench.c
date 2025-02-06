@@ -7,9 +7,9 @@
 static inline void merge(int32_t array[], size_t left, size_t middle,
                          size_t right);
 static inline void mergeSort(int32_t array[], size_t left, size_t right);
-int compare(const void *a, const void *b);
+int compare(const void* a, const void* b);
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     if (argc != 4) {
         printf(
             "Использование: %s <размер массива> <сортировка>"
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int32_t *array = malloc(size * sizeof(int32_t));
+    int32_t* array = malloc(size * sizeof(int32_t));
     if (!array) {
         printf("Ошибка: недостаточно памяти\n");
         return 1;
@@ -63,8 +63,8 @@ static inline void merge(int32_t array[], size_t left, size_t middle,
     size_t leftSize = middle - left + 1;
     size_t rightSize = right - middle;
 
-    int32_t *leftArray = malloc(leftSize * sizeof(int32_t));
-    int32_t *rightArray = malloc(rightSize * sizeof(int32_t));
+    int32_t* leftArray = malloc(leftSize * sizeof(int32_t));
+    int32_t* rightArray = malloc(rightSize * sizeof(int32_t));
 
     if (!leftArray || !rightArray) {
         printf("Ошибка: недостаточно памяти при слиянии\n");
@@ -113,7 +113,7 @@ static inline void mergeSort(int32_t array[], size_t left, size_t right) {
 }
 
 // Функция сравнения для qsort()
-int compare(const void *a, const void *b) {
-    int32_t x = *(const int32_t *)a, y = *(const int32_t *)b;
+int compare(const void* a, const void* b) {
+    int32_t x = *(const int32_t*)a, y = *(const int32_t*)b;
     return (x > y) - (x < y);
 }
