@@ -1,37 +1,43 @@
-#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#define A 4.0F
+#define B 1.5F
+#define C 2.4F
+#define D 8.999F
 
-double fmadd(int m, volatile double d, double a, double b, double c) {
-  for (int32_t i = 0; i < m; i++) {
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
+double fmadd(int marg, volatile double darg, double aarg, double barg,
+             double carg) {
+  for (int32_t i = 0; i < marg; i++) {
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
+    darg = aarg + barg * carg;
   }
-  return d;
+  return darg;
 }
 
-double fmsub(int m, volatile double d, double a, double b, double c) {
-  for (int32_t i = 0; i < m; i++) {
-    d = a - b * c;
-    d = a - b * c;
-    d = a - b * c;
-    d = a - b * c;
-    d = a - b * c;
-    d = a - b * c;
-    d = a - b * c;
-    d = a - b * c;
-    d = a - b * c;
-    d = a - b * c;
+double fmsub(int marg, volatile double darg, double aarg, double barg,
+             double carg) {
+  for (int32_t i = 0; i < marg; i++) {
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
+    darg = aarg - barg * carg;
   }
-  return d;
+  return darg;
 }
 
 int main(int argc, char** argv) {
@@ -42,20 +48,25 @@ int main(int argc, char** argv) {
 
   int32_t arg = 0;
   arg = atoi(argv[1]);
-  volatile int m = 0;
-  m = atoi(argv[2]);
-  volatile double a, b, c, d;
-  a = 4.0f;
-  b = 1.5f;
-  c = 2.4f;
-  d = 8.999f;
+  volatile int marg = 0;
+  marg = atoi(argv[2]);
+  volatile double aarg;
+  volatile double barg;
+  volatile double darg;
+  volatile double carg;
+  aarg = A;
+  barg = B;
+  carg = C;
+  darg = D;
 
   switch (arg) {
     case 1:
-      a = fmadd(m, d, a, b, c);
+      aarg = fmadd(marg, darg, aarg, barg, carg);
       break;
     case 2:
-      a = fmsub(m, d, a, b, c);
+      aarg = fmsub(marg, darg, aarg, barg, carg);
+      break;
+    default:
       break;
   }
 

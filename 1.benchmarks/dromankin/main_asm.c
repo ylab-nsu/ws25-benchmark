@@ -1,37 +1,83 @@
-#include <inttypes.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#define A 3.0F
+#define B 2.0F
+#define C 4.0F
+#define D 0.0F
 
-double fmadd(int m, volatile double d, double a, double b, double c) {
-  for (int32_t i = 0; i < m; i++) {
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
+double fmadd(int marg, volatile double darg, double aarg, double barg,
+             double carg) {
+  for (int32_t i = 0; i < marg; i++) {
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmadd.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
   }
-  return d;
+  return darg;
 }
 
-double fmsub(int m, volatile double d, double a, double b, double c) {
-  for (int32_t i = 0; i < m; i++) {
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmsub.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
+double fmsub(int marg, volatile double darg, double aarg, double barg,
+             double carg) {
+  for (int32_t i = 0; i < marg; i++) {
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
+    asm volatile("fmsub.d %0, %1, %2, %3"
+                 : "=f"(darg)
+                 : "f"(barg), "f"(carg), "f"(aarg));
   }
-  return d;
+  return darg;
 }
 
 int main(int argc, char** argv) {
@@ -41,18 +87,20 @@ int main(int argc, char** argv) {
   }
   int32_t arg = 0;
   arg = atoi(argv[1]);
-  volatile int m = 0;
-  m = atoi(argv[2]);
-  double a = 3.0f;
-  double b = 2.0f;
-  double c = 4.0f;
-  volatile double d = 0.0f;
+  volatile int marg = 0;
+  marg = atoi(argv[2]);
+  double aarg = A;
+  double barg = B;
+  double carg = C;
+  volatile double darg = D;
   switch (arg) {
     case 1:
-      d = fmadd(m, d, a, b, c);
+      darg = fmadd(marg, darg, aarg, barg, carg);
       break;
     case 2:
-      d = fmsub(m, d, a, b, c);
+      darg = fmsub(marg, darg, aarg, barg, carg);
+      break;
+    default:
       break;
   }
   return 0;
