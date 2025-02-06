@@ -1,5 +1,6 @@
 cd ../
-for ((i = 1; i < 1000000 + 1; i+=1000))
+gcc  -fno-verbose-asm -march=rv64id main_asm.c -o main_asm -O0 -pg
+for ((i = 1; i < 10000000 + 1; i+=100000))
 do
 if [[ $1 == 1 ]] then
 	perf stat -o out.txt  ./main_asm $1 $i

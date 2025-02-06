@@ -1,5 +1,6 @@
 cd ../
-for ((i = 1; i < 1000000 + 1; i+=1000))
+gcc -g main.c -o main -O0 -pg
+for ((i = 1; i < 10000000 + 1; i+=100000))
 do
 if [[ $1 == 1 ]]; then
         perf stat -o outfmadd.txt  ./main $1 $i
