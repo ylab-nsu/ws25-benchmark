@@ -94,10 +94,11 @@ done
 
 ## Результаты работы бенчмарка
 
-Fmadd
-
-Fmadd(ассемблер)
-
-Fmsub
-
-Fmsub(ассемблер)
+# Fmadd
+![out_fmadd.png](images/out_fmadd.png)
+# Fmadd(ассемблер)
+![out_fmadd_asm.png](images/out_fmadd_asm.png)
+# Fmsub
+![out_fmsub.png](images/out_fmsub.png)
+# Fmsub(ассемблер)
+![out_fmsub_asm.png](images/out_fmsub_asm.png)
