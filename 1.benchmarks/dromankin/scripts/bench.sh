@@ -1,14 +1,20 @@
 cd ../
+rep=20
+iter=100000
+n=10000000
 gcc -g main.c -o main -O0 -pg
-for ((i = 1; i < 10000000 + 1; i+=100000))
-do
 if [[ $1 == 1 ]]; then
-        perf stat -o outfmadd.txt  ./main $1 $i
-        grep elapsed outfmadd.txt > out2fmadd.txt
-        cat out2fmadd.txt | cut -d"s" -f1 >> out3fmadd.txt
+	for ((i = 1; i < $n + 1; i+=$iter))
+	do
+	perf stat -o out_fmadd.txt -r $rep --table ./main $1 $i
+	grep ") #" out_fmadd.txt > out2_fmadd.txt
+	cat out2_fmadd.txt | cut -d"(" -f1 >> out3_fmadd.txt
+	done
 else
-        perf stat -o outfmsub.txt  ./main $1 $i
-        grep elapsed outfmsub.txt > out2fmsub.txt
-        cat out2fmsub.txt | cut -d"s" -f1 >> out3fmsub.txt
+	for ((i = 1; i < $n + 1; i+=$iter))
+	do
+	perf stat -o out_fmsub.txt -r $rep --table ./main $1 $i
+	grep ") #" out_fmsub.txt > out2_fmsub.txt
+	cat out2_fmsub.txt | cut -d"(" -f1 >> out3_fmsub.txt
+	done
 fi
-done
