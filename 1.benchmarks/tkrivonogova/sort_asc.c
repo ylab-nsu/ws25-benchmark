@@ -1,12 +1,13 @@
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #define ARRAY_SIZE 1000000
 
-void heapify(int arr[], int n, int i) {
-    int largest = i;
-    int left = 2 * i + 1;
-    int right = 2 * i + 2;
+void heapify(uint32_t arr[], uint32_t n, uint32_t i) {
+    uint32_t largest = i;
+    uint32_t left = 2 * i + 1;
+    uint32_t right = 2 * i + 2;
 
     if (left < n && arr[left] > arr[largest])
         largest = left;
@@ -15,7 +16,7 @@ void heapify(int arr[], int n, int i) {
         largest = right;
 
     if (largest != i) {
-        int temp = arr[i];
+        uint32_t temp = arr[i];
         arr[i] = arr[largest];
         arr[largest] = temp;
 
@@ -23,12 +24,12 @@ void heapify(int arr[], int n, int i) {
     }
 }
 
-void heap_sort(int arr[], int n) {
-    for (int i = n / 2 - 1; i >= 0; i--)
+void heap_sort(uint32_t arr[], uint32_t n) {
+    for (uint32_t i = n / 2 - 1; i >= 0; i--)
         heapify(arr, n, i);
 
-    for (int i = n - 1; i >= 0; i--) {
-        int temp = arr[0];
+    for (uint32_t i = n - 1; i >= 0; i--) {
+        uint32_t temp = arr[0];
         arr[0] = arr[i];
         arr[i] = temp;
 
@@ -44,29 +45,29 @@ int main() {
         return EXIT_FAILURE;
     }
 
-    int* numbers = NULL;
-    int count = 0;
+    uint32_t* numbers = NULL;
+    uint32_t count = 0;
 
     // Выделяем память для массива чисел
-    numbers = (int*)malloc(ARRAY_SIZE * sizeof(int));
+    numbers = (uint32_t*)malloc(ARRAY_SIZE * sizeof(uint32_t));
     if (numbers == NULL) {
         perror("Malloc failed");
         return EXIT_FAILURE;
     }
 
     // Читаем числа из файла
-    while (fscanf(input_file, "%d", &numbers[count]) == 1) {
+    while (fscanf(input_file, "%" SCNx32, &numbers[count]) == 1) {
         count++;
     }
 
     // Сортировка чисел по возрастанию (ascending = 1) или убыванию (ascending =
     // 0)
-    int ascending = 1;  // Измените на 0 для сортировки по убыванию
+    uint32_t ascending = 1;  // Измените на 0 для сортировки по убыванию
     heap_sort(numbers, count);
 
     // Запись отсортированных чисел в выходной файл
-    for (int i = 0; i < count; i++) {
-        fprintf(output_file, "%d\n", numbers[i]);
+    for (uint32_t i = 0; i < count; i++) {
+        fprintf(output_file, "%u\n", numbers[i]);
     }
 
     // Освобождение памяти и закрытие файлов
