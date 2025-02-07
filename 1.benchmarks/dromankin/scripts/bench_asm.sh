@@ -1,3 +1,4 @@
+#!/bin/bash
 cd ../
 rep=20
 iter=100000
