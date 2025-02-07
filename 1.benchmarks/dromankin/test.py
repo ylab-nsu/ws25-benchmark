@@ -38,8 +38,8 @@ for line in file2:
 
 
 plt.figure().set_figwidth(15)
-plt.plot(x, y, 'r', label='lichee')
-plt.plot(x, y2, color = 'g', label='banana')
+plt.plot(x, y, 'ro-', label='lichee')
+plt.plot(x, y2, 'go-', label='banana')
 plt.title("fmadd", fontsize = 20)
 plt.grid(True)
 plt.ylabel('time(s)', fontsize = 15)
@@ -86,8 +86,8 @@ for line in file2:
 		buf = []
 
 plt.figure().set_figwidth(15)
-plt.plot(x, y, 'r', label='lichee')
-plt.plot(x, y2, color = 'g', label='banana')
+plt.plot(x, y, 'ro-', label='lichee')
+plt.plot(x, y2, 'go-', label='banana')
 plt.title("fmsub", fontsize = 20)
 plt.grid(True)
 plt.ylabel('time(s)', fontsize = 15)
@@ -135,8 +135,8 @@ for line in file2:
 		buf = []
 
 plt.figure().set_figwidth(15)
-plt.plot(x, y, 'r', label='lichee')
-plt.plot(x, y2, color = 'g', label='banana')
+plt.plot(x, y, 'ro-', label='lichee')
+plt.plot(x, y2, 'go-', label='banana')
 plt.title("fmadd(asm)", fontsize = 20)
 plt.grid(True)
 plt.ylabel('time(s)', fontsize = 15)
@@ -183,8 +183,8 @@ for line in file2:
 		buf = []
 
 plt.figure().set_figwidth(15)
-plt.plot(x, y, 'r', label='lichee')
-plt.plot(x, y2, color = 'g', label='banana')
+plt.plot(x, y, 'ro-', label='lichee')
+plt.plot(x, y2, 'go-', label='banana')
 plt.title("fmsub(asm)", fontsize = 20)
 plt.grid(True)
 plt.ylabel('time(s)', fontsize = 15)
