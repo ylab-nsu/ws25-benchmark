@@ -1,6 +1,7 @@
+cd ../
 rep=20
-iter=1000
-n=100000
+iter=100000
+n=10000000
 gcc -g main.c -o main -O0 -pg
 if [[ $1 == 1 ]]; then
 	for ((i = 1; i < $n + 1; i+=$iter))

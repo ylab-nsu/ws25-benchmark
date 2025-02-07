@@ -1,7 +1,8 @@
+cd ../
 rep=20
-iter=1000
-n=100000
-gcc  -fno-verbose-asm -march=rv64id main_asm.c -o main_asm -O0 -pg
+iter=100000
+n=10000000
+gcc  -fno-verbose-asm -march=rv64id main_asm.c -o main_asm -O3 -pg
 if [[ $1 == 1 ]]; then
 	for ((i = 1; i < $n + 1; i+=$iter))
 	do
