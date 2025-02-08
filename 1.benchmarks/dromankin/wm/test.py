@@ -20,7 +20,7 @@ for line in file:
 		min_val = min(buf)
 		y.append(min_val)
 		x.append(count)
-		count += 1000000
+		count += 2000000
 		c = 0
 		buf = []
 buf = []
@@ -45,7 +45,7 @@ plt.grid(True)
 plt.ylabel('time(s)', fontsize = 15)
 plt.xlabel('operations', fontsize = 15)
 
-plt.ylim([0, 1])
+plt.ylim([0, 0.2])
 plt.legend()
 plt.savefig('out_cnop.png')
 file.close()
