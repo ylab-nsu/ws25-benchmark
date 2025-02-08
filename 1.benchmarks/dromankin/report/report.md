@@ -1,6 +1,7 @@
 # FMA benchmark
 
 Бенчмарк направлен на тестирование операций FMA (Fused-Multiply Add, умножение-сложение): fmadd и fmsub на разных платах в двух вариантах: как функция на языке C и как ассемблерная инструкция (с помощью ассемблерных вставок)
+## Условия эксперимента
 Платы: LicheePi 4A; Banana Pi BPI-F3
 
 Lichee
@@ -22,28 +23,15 @@ Banana
 CPU(s) scaling MHz:  100%
   CPU max MHz:         1600.0000
   CPU min MHz:         614.4000
-Caches (sum of all):
-  L1d:                 256 KiB (8 instances)
-  L1i:                 256 KiB (8 instances)
-  L2:                  1 MiB (2 instances)
-LEVEL1_ICACHE_SIZE                 32768
-LEVEL1_ICACHE_ASSOC                4
-LEVEL1_ICACHE_LINESIZE             64
-LEVEL1_DCACHE_SIZE                 32768
-LEVEL1_DCACHE_ASSOC                4
-LEVEL1_DCACHE_LINESIZE             64
-LEVEL2_CACHE_SIZE                  524288
-LEVEL2_CACHE_ASSOC                 16
-LEVEL2_CACHE_LINESIZE              64
-LEVEL3_CACHE_SIZE                  0
-LEVEL3_CACHE_ASSOC                 0
-LEVEL3_CACHE_LINESIZE              0
-LEVEL4_CACHE_SIZE                  0
-LEVEL4_CACHE_ASSOC                 0
-LEVEL4_CACHE_LINESIZE              0
 ```
+Одной из проблем был троттлинг платы Lichee - график, иллюстрирующий поведение до и после фиксирования частоты
 
-Основное тело цикла:
+![asm_hotspot.png](images/thr.png)
+
+По сравнению с этим графиком был изменён принцип замеров: вместо 1 замера на 1 кол-во циклов проводились 20 замеров и бралось минимальное время
+
+## Код
+Основное тело цикла бенчмарки:
 ```c
 double fmadd(int32_t marg, volatile double darg, double aarg, double barg,
              double carg) {
@@ -62,7 +50,7 @@ double fmadd(int32_t marg, volatile double darg, double aarg, double barg,
     return darg;
 }
 ```
-Ассемблерная инструкция:
+Основное тело цикла бенчмарки с ассемблерными вставками:
 ```c
 double fmadd(int32_t marg, volatile double darg, double aarg, double barg,
              double carg) {
@@ -101,11 +89,12 @@ double fmadd(int32_t marg, volatile double darg, double aarg, double barg,
     return darg;
 }
 ```
-(аналогично для fmsub)
+Аналогичный код был написан для инструкции `fmsub`
 
-Дублирование кода инструкций в телах циклов необходимо для того, чтобы наиболее "горячими" были инструкции, действительно относящиеся к функции (т.н. loop unrolling) (в данном случае - `fadd.d` и `fmul.d`).
+Дублирование кода инструкций в телах циклов необходимо для того, чтобы наиболее "горячими" (т.е. наиболее часто исполняющиеся в ходе работы программы) были инструкции, действительно относящиеся к функции (т.н. loop unrolling) (в данном случае - `fadd.d` и `fmul.d`).
 
-Рассмотрим на примере функции fmadd:
+Рассмотрим на примере функции `fmadd`.
+
 Так выглядит профилировка с одной операцией сложения в цикле:
 
 ![sextw_lw_hotspot.png](images/sextw_lw_hotspot.png)
@@ -118,28 +107,29 @@ double fmadd(int32_t marg, volatile double darg, double aarg, double barg,
 
 Инструкции `sext.w` и `lw` выполняются меньшее кол-во времени, а инструкции сложения и умножения в сумме занимают ~77%, поэтому такой код можно использовать для тестирования
 
-Горячий код (с ассемблерными вставками) (~92%):
+Горячий код (с ассемблерными вставками) (~92% занимает инструкция `fmsub.d`, поэтому данный код подходит для тестирования):
 
 ![asm_hotspot.png](images/asm_hotspot.png)
 
-Одной из проблем был троттлинг платы Lichee - график, иллюстрирующий поведение до и после фиксирования частоты
 
-![asm_hotspot.png](images/thr.png)
+## Окружение и инструкция по запуску:
+Тулчейн:
+  * Компилятор - `gcc`
+  * Профилировщики - `linux-perf` и `gprof`
 
-По сравнению с этим графиком был изменён принцип замеров: вместо 1 замера на 1 кол-во циклов проводились 20 замеров и бралось минимальное время
-## Окружение:
-* Сборка и ключи компиляции
+**Сборка и ключи компиляции**
 ```
 gcc -g main.c -o main -O0 -pg
 
 gcc  -fno-verbose-asm -march=rv64id main_asm.c -o main_asm -O3 -pg
 ```
-Ключи `-g`, `-pg` и `-fno-verbose-asm` создают дополнительную информацию, полезную при профилировке и отладке (`-pg`, в частности, создаёт `gmon.out` для профилировщика `gprof`) (не используются для контрольных замеров в целях чистоты эксперимента)
+Ключи `-pg` и `-fno-verbose-asm` создают дополнительную информацию, полезную при профилировке и отладке (не используются для контрольных замеров в целях чистоты эксперимента)
 
 Ключ `-O` устанавливает степень оптимизации компилятора
 
 Ключ `-march=rv64id` подключает расширение RISC-V для работы c double
-* Скрипт для просмотра горячего кода (аналогично для бенчмарка с ассемблерными вставками)
+
+**Скрипт для просмотра горячего кода (аналогично для бенчмарка с ассемблерными вставками)**
 ```bash
 cd ../
 perf record -e cpu-clock ./main $1 $2
@@ -147,7 +137,7 @@ perf report
 ```
 
 
-* Скрипт для замеров и записи значений в отдельный файл (аналогично для бенчмарка с ассемблерными вставками)
+**Скрипт для замеров и записи значений в отдельный файл (аналогично для бенчмарка с ассемблерными вставками)**
 ```bash
 #!/bin/bash
 cd ../
@@ -171,71 +161,15 @@ else
 	done
 fi
 ```
-Программа для построения графиков:
-
-```python
-import matplotlib.pyplot as plt
-import numpy as np
-import sys
-
-CONST = int(sys.argv[1])
-file = open("out3_fmadd.txt", "r")
-file2 = open("banana_out3_fmadd.txt", "r")
-x = []
-y = []
-y2 = []
-buf = []
-min_val = 0
-count = 1;
-c = 0
-
-for line in file:
-	buf.append(float(line))
-	c += 1
-	if c == CONST:
-		min_val = min(buf)
-		y.append(min_val)
-		x.append(count)
-		count += 1000000
-		c = 0
-		buf = []
-buf = []
-c = 0
-min_val = 0
-for line in file2:
-	buf.append(float(line))
-	c += 1
-	if c == CONST:
-		min_val = min(buf)
-		y2.append(min_val)
-		c = 0
-
-		buf = []
-
-
-plt.figure().set_figwidth(15)
-plt.plot(x, y, 'ro-', label='lichee')
-plt.plot(x, y2, 'go-', label='banana')
-plt.title("fmadd", fontsize = 20)
-plt.grid(True)
-plt.ylabel('time(s)', fontsize = 15)
-plt.xlabel('cycle iterations', fontsize = 15)
-
-plt.ylim([0, 1])
-plt.legend()
-plt.savefig('out_fmadd.png')
-file.close()
-file2.close()
-
-```
-
 
 Запуск: `./bench.sh <номер функции: 1 - fmadd, 2 - fmsub>` (для функций с ассемблерными вставками - `bench_asm.sh`)
 
 Скрипт создаёт файлы вида `out3_<имя_функции>_<ассемблер>.txt`.
-Файлы с платы Lichee должны иметь вид `out3_fmadd.txt`, с Banana - `banana_out3_fmadd.txt`.
+Файлы с платы Lichee должны иметь вид `out3_fmadd.txt`/`out3_fmadd_asm.txt`, с Banana - `banana_out3_fmadd.txt/banana_out3_fmadd_asm.txt`. Аналогично файлы называются для инструкции `fmsub`
 
-Эти файлы нужны для запуска программы построения графиков `test.py`
+**Важно: при повторном запуске на одну и ту же функцию нужно удалить файл прошлого запуска `out3_<имя_функции>_<ассемблер>.txt`**
+
+Эти файлы принимаются на вход программы построения графиков `test.py`
 
 Запуск: `python test.py <значение переменной rep в скрипте для замеров>`
 
@@ -244,13 +178,30 @@ file2.close()
 Переменная `rep` - количество запусков на некотором значении количества операций, среди которых выбирается минимальное время
 
 Примечание: для запуска нужна библиотека `matplotlib`
-## Результаты работы бенчмарка
+# Результаты работы бенчмарка
 
-# Fmadd
+Контрольные замеры проводились в условиях изоляции плат от сети
+
+## Fmadd
 ![out_fmadd.png](images/out_fmadd.png)
-# Fmadd(ассемблер)
+
+По графику можно сделать вывод, что на операции `fmadd` Lichee работает быстрее Banana
+
+## Fmadd(ассемблер)
+
 ![out_fmadd_asm.png](images/out_fmadd_asm.png)
-# Fmsub
+
+В сравнении с бенчмарком без ассемблерных вставок обе платы показывают лучший результат
+
+## Fmsub
 ![out_fmsub.png](images/out_fmsub.png)
-# Fmsub(ассемблер)
+
+На плате Lichee инструкции `fmadd` и `fmsub` работают примерно одинаково, можно увидеть, что на плате Banana `fmsub` работает несколько медленнее
+
+## Fmsub(ассемблер)
+
 ![out_fmsub_asm.png](images/out_fmsub_asm.png)
+
+Ситуация, аналогичная `fmadd`: на обеих платах код с ассемблерными вставками работает быстрее, на Banana `fmsub` и `fmadd` работают примерно одинаково
+
+В целом, можно сделать вывод, что FMA-инструкции работают быстрее на плате Lichee; на обеих платах программа ускоряется при использовании ассемблерных вставок
