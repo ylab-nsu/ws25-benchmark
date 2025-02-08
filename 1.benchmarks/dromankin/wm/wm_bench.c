@@ -4,49 +4,18 @@
 
 void cnop(int32_t marg) {
     for (int32_t i = 0; i < marg; i++) {
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
-        asm volatile("c.nop"
-                     :
-                     :
-        );
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
+        asm volatile("c.nop" : :);
     }
 }
-
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -58,5 +27,3 @@ int main(int argc, char** argv) {
     cnop(marg);
     return 0;
 }
-
-
