@@ -108,20 +108,20 @@ Paзницу можно наглядно увидеть сравнив проф�
 ## Результаты работы бенчмарка
 
 # sum - операция сложения - Banana PI
-![banana_sum.png](images/banana_sum.png)
+![banana_sum.jpg](images/banana_sum.jpg)
 # sum - операция сложения - Lichiee PI
-![lichee_sum.png](images/lichee_sum.png)
+![lichee_sum.jpg](images/lichee_sum.jpg)
 # diff - операция вычитания - Banana PI
-![banana_diff.png](images/banana_diff.png)
+![banana_diff.jpg](images/banana_diff.jpg)
 # diff - операция вычитания - Lichiee PI
-![lichee_diff.png](images/lichee_diff.png)
+![lichee_diff.jpg](images/lichee_diff.jpg)
 # mult - операция умножения - Banana PI
-![banana_mult.png](images/banana_mult.png)
+![banana_mult.jpg](images/banana_mult.jpg)
 # mult - операция умножения - Lichiee PI
-![lichee_mult.png](images/lichee_mult.png)
+![lichee_mult.jpg](images/lichee_mult.jpg)
 # del - операция деления - Banana PI
-![banana_del.png](images/banana_del.png)
+![banana_del.jpg](images/banana_del.jpg)
 # del - операция деления - Lichiee PI
-![lichee_del.png](images/lichee_del.png)
+![lichee_del.jpg](images/lichee_del.jpg)
 
 Исходя из данных результатов - можно сделать вывод, что на плате Lichee Pi - результаты в несколько раз выше. Это поддтверждает более высокую частоту процессора на плате.
