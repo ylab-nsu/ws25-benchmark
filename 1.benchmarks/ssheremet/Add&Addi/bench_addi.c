@@ -209,7 +209,7 @@ void measure_addi(int iterations, int dst, int src) {
 
 
 int main() {
-    int iterations = 1 000 000 000; 
+    int iterations = 1000000000; 
     volatile int dst = 0;
     volatile int src = 5;
     measure_addi(iterations,dst,src);
