@@ -131,6 +131,7 @@ gcc -g main.c -o main -O0 -pg
 gcc  -fno-verbose-asm -march=rv64id main_asm.c -o main_asm -O3 -pg
 ```
 Ключи `-g`, `-pg` и `-fno-verbose-asm` создают дополнительную информацию, полезную при профилировке и отладке (`-pg`, в частности, создаёт `gmon.out` для профилировщика `gprof`)
+
 Ключ `-O` устанавливает степень оптимизации компилятора
 Ключ `-march=rv64id` подключает расширение RISC-V для работы c double
 * Скрипт для просмотра горячего кода (аналогично для бенчмарка с ассемблерными вставками)
@@ -164,7 +165,66 @@ else
 	done
 fi
 ```
-Запуск: ./parse.sh <номер функции: 1 - fmadd, 2 - fmsub>
+Программа для построения графиков:
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+import sys
+
+CONST = int(sys.argv[1])
+file = open("out3_fmadd.txt", "r")
+file2 = open("banana_out3_fmadd.txt", "r")
+x = []
+y = []
+y2 = []
+buf = []
+min_val = 0
+count = 1;
+c = 0
+
+for line in file:
+	buf.append(float(line))
+	c += 1
+	if c == CONST:
+		min_val = min(buf)
+		y.append(min_val)
+		x.append(count)
+		count += 1000000
+		c = 0
+		buf = []
+buf = []
+c = 0
+min_val = 0
+for line in file2:
+	buf.append(float(line))
+	c += 1
+	if c == CONST:
+		min_val = min(buf)
+		y2.append(min_val)
+		c = 0
+
+		buf = []
+
+
+plt.figure().set_figwidth(15)
+plt.plot(x, y, 'ro-', label='lichee')
+plt.plot(x, y2, 'go-', label='banana')
+plt.title("fmadd", fontsize = 20)
+plt.grid(True)
+plt.ylabel('time(s)', fontsize = 15)
+plt.xlabel('cycle iterations', fontsize = 15)
+
+plt.ylim([0, 1])
+plt.legend()
+plt.savefig('out_fmadd.png')
+file.close()
+file2.close()
+
+```
+
+
+Запуск: `./bench.sh <номер функции: 1 - fmadd, 2 - fmsub>` (для функций с ассемблерными вставками - bench_asm.sh)
 
 Скрипт создаёт файлы вида out3_<имя_функции>_<ассемблер>.txt.
 Файлы с платы Lichee должны иметь вид out3_fmadd.txt, с Banana - banana_out3_fmadd.txt.
@@ -173,7 +233,11 @@ fi
 
 Запуск: python test.py <значение переменной rep в скрипте для замеров>
 
-Например: python test.py 20
+Например: `python test.py 20`
+
+Переменная `rep` - количество запусков на некотором значении количества операций, среди которых выбирается минимальное
+
+Примечание: для запуска нужна библиотека matplotlib
 ## Результаты работы бенчмарка
 
 # Fmadd
