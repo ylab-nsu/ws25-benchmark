@@ -1,7 +1,7 @@
 #!/bin/bash
 gcc  -fno-verbose-asm -march=rv64idc wm_bench.c -o wm_bench -O0 -pg
 rep=20
-iter=10000
+iter=100000
 n=10000000
 
 for ((i = 1; i < $n + 1; i+=$iter))
