@@ -6,94 +6,90 @@
 
 Основное тело цикла бенчмарка сложения:
 ```c
-double floatSUM(int m, double y, double l, double multi) {
-    double e = y;
-    double d = l;
-    for (uint32_t i = 0; i < m; ++i) {
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;
-        multi = e + d;                                             
+double floatADD(int counter, double main_argument_1, double main_argument_2, double result) {
+    double extra_argument_1 = main_argument_1;
+    double extra_argument_2 = main_argument_2;
+
+    for (uint32_t i = 0; i < counter; ++i) {
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+        result = main_argument_1 + main_argument_2;
+                                     
     }
-    return multi;
+    return result;
 }
 ```
 Основное тело цикла бенчмарка вычитания:
 ```c
-double floatDIFF(int m, double y, double l, double multi) {
-    double e = y;
-    double d = l;
-    for (uint32_t i = 0; i < m; ++i) {
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;  
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;
-        multi = e - d;  
-        multi = e - d;                                             
+double floatSUB(int counter, double main_argument_1, double main_argument_2, double result) {
+    double extra_argument_1 = main_argument_1;
+    double extra_argument_2 = main_argument_2;
+
+    for (uint32_t i = 0; i < counter; ++i) {
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+        result = main_argument_1 - main_argument_2;
+                                     
     }
-    return multi;
+    return result;
 }
 ```
 Основное тело цикла бенчмарка умножения:
 ```c
-double floatMUL(int m, double y, double l, double multi) {
-    double e = y;
-    double d = l;
-    for (uint32_t i = 0; i < m; ++i) {
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;  
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;
-        multi = e * d;  
-        multi = e * d;                                             
+double floatMUL(int counter, double main_argument_1, double main_argument_2, double result) {
+    double extra_argument_1 = main_argument_1;
+    double extra_argument_2 = main_argument_2;
+
+    for (uint32_t i = 0; i < counter; ++i) {
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+        result = main_argument_1 * main_argument_2;
+                                     
     }
-    return multi;
+    return result;
 }
 ```
 Основное тело цикла бенчмарка деления:
 ```c
-double floatDEL(int m, double y, double l, double multi) {
-    double e = y;
-    double d = l;
-    for (uint32_t i = 0; i < m; ++i) {
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;
-        multi = e / d;                                             
+double floatDIV(int counter, double main_argument_1, double main_argument_2, double result) {
+    double extra_argument_1 = main_argument_1;
+    double extra_argument_2 = main_argument_2;
+
+    for (uint32_t i = 0; i < counter; ++i) {
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+        result = main_argument_1 / main_argument_2;
+                                     
     }
-    return multi;
+    return result;
 }
 ```
 Дублирование кода инструкций в теле циклов (loop unrolling) необходимо для того, чтобы инструкции, производительность которых мы измеряем ("fdiv.f", "fadd.d", "fsub.d", "fmul.d"), занимали больший процент нагрузки процессора относительно других.
