@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void cnop(int m) {
-    for (int32_t i = 0; i < m; i++) {
+void cnop(int32_t marg) {
+    for (int32_t i = 0; i < marg; i++) {
         asm volatile("c.nop"
                      :
                      :
@@ -47,55 +47,15 @@ void cnop(int m) {
     }
 }
 
-int cor(int m, int a) {
-	asm volatile("c.or x0, x0"
-                     :
-                     :
-        );
-	return a;
-}
-/*
-int candi (int m, int a) {
-	asm volatile("c.andi %0, 0b011111"
-                     :"=&r"(a)
-                     :"r"(a)
-        );
-	return a;
-}
-
-int csub (int m, int a) {
-	asm volatile("c.sub %0, %1"
-                     :"=&r"(a)
-                     :"r"(a)
-        );
-	return a;
-}
-*/
 
 int main(int argc, char** argv) {
-    if (argc != 3) {
-        printf("usage: ./main_asm 1 - cnop; 2 - c.or\n");
+    if (argc != 2) {
+        printf("usage: ./wm_bencn <number of cycles>");
         exit(1);
     }
-
-    int32_t arg = 0;
-    arg = atoi(argv[1]);
-    volatile int m = 0;
-    m = atoi(argv[2]);
-    int a = 0xab;
-    int b = 0xcd;
-    printf("%d\n", a);
-    a = cor(m, a);
-    printf("%d\n", a);
-/*
-    switch (arg) {
-        case 1:
-            cnop(m);
-            break;
-        default:
-            break;
-    }
-*/
+    volatile int32_t marg = 0;
+    marg = atoi(argv[1]);
+    cnop(marg);
     return 0;
 }
 
