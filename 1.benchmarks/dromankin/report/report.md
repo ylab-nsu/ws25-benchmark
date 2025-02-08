@@ -3,40 +3,102 @@
 Бенчмарк направлен на тестирование операций FMA (Fused-Multiply Add, умножение-сложение): fmadd и fmsub на разных платах в двух вариантах: как функция на языке C и как ассемблерная инструкция (с помощью ассемблерных вставок)
 Платы: LicheePi 4A; Banana Pi BPI-F3
 
+Lichee
+```
+4 cores
+
+cpu-freq        : 1.848Ghz
+cpu-icache      : 64KB
+cpu-dcache      : 64KB
+cpu-l2cache     : 1MB
+cpu-tlb         : 1024 4-ways
+cpu-cacheline   : 64Bytes
+cpu-vector      : 0.7.1
+```
+Banana
+```
+8 cores
+
+CPU(s) scaling MHz:  100%
+  CPU max MHz:         1600.0000
+  CPU min MHz:         614.4000
+Caches (sum of all):
+  L1d:                 256 KiB (8 instances)
+  L1i:                 256 KiB (8 instances)
+  L2:                  1 MiB (2 instances)
+LEVEL1_ICACHE_SIZE                 32768
+LEVEL1_ICACHE_ASSOC                4
+LEVEL1_ICACHE_LINESIZE             64
+LEVEL1_DCACHE_SIZE                 32768
+LEVEL1_DCACHE_ASSOC                4
+LEVEL1_DCACHE_LINESIZE             64
+LEVEL2_CACHE_SIZE                  524288
+LEVEL2_CACHE_ASSOC                 16
+LEVEL2_CACHE_LINESIZE              64
+LEVEL3_CACHE_SIZE                  0
+LEVEL3_CACHE_ASSOC                 0
+LEVEL3_CACHE_LINESIZE              0
+LEVEL4_CACHE_SIZE                  0
+LEVEL4_CACHE_ASSOC                 0
+LEVEL4_CACHE_LINESIZE              0
+```
+
 Основное тело цикла:
 ```c
-double fmadd(int m, volatile double d, double a, double b, double c) {
-  for (int32_t i = 0; i < m; i++) {
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-    d = a + b * c;
-  }
-  return d;
+double fmadd(int32_t marg, volatile double darg, double aarg, double barg,
+             double carg) {
+    for (int32_t i = 0; i < marg; i++) {
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+        darg = aarg + barg * carg;
+    }
+    return darg;
 }
 ```
 Ассемблерная инструкция:
 ```c
-double fmadd(int m, volatile double d, double a, double b, double c) {
-  for (int32_t i = 0; i < m; i++) {
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-    asm volatile("fmadd.d %0, %1, %2, %3" : "=f"(d) : "f"(b), "f"(c), "f"(a));
-  }
-  return d;
+double fmadd(int32_t marg, volatile double darg, double aarg, double barg,
+             double carg) {
+    for (int32_t i = 0; i < marg; i++) {
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+        asm volatile("fmadd.d %0, %1, %2, %3"
+                     : "=f"(darg)
+                     : "f"(barg), "f"(carg), "f"(aarg));
+    }
+    return darg;
 }
 ```
 (аналогично для fmadd)
