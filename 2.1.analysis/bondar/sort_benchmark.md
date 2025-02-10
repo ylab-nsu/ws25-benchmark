@@ -201,11 +201,11 @@ void scramble(int *arr, int n, int cycle) {
 
 #### Версия quicksort memcpy и XOR
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/qsort_with_memcpy.png)
+![quicksort memcy + XOR](./../../1.benchmarks/bondar/qsort_bench/pics/qsort_with_memcpy.png)
 
 #### Версия quicksort memcpy with offset
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/qsort_with_memcpy_offset.png)
+![quicksort memcy with offset](./../../1.benchmarks/bondar/qsort_bench/pics/qsort_with_memcpy_offset.png)
 
 #### Анализ
 
@@ -218,29 +218,60 @@ void scramble(int *arr, int n, int cycle) {
 
 Мы также можем заметить, что на графиках не наблюдается резких скачков времени выполнения, которые могли бы указывать на выход за пределы кэша процессора. Это можно объяснить особенностью алгоритма `quicksort` — очень хорошей локальностью доступа к памяти.
 
-### Важность внешнего шума
+### Важность внешних условий
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/qsort_2day_noisy.png)
+Во второй день были получены сильно более шумные данные по причине менее благоприятных тестовых условий: на одной тестовой плате одновременно сидели через ssh соединение несколько пользователей. К тому же в програмном коде была допущена ошибка работы с памятью, что тоже могло повлиять на результаты.
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/qsort_2day_noisy_banana_cache.png)
+![lichee vs banana noise](./../../1.benchmarks/bondar/qsort_bench/pics/qsort_2day_noisy.png)
+
+![banana l1, l2 cache misses](./../../1.benchmarks/bondar/qsort_bench/pics/qsort_2day_noisy_banana_cache.png)
 
 ### Финальный результат
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/Banana-Lichee.svg)
+Для финальных прогонов бенчмарков был изменен подход к тестированию.
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/Caches%20Lichee.svg)
+1. Изоляция тестовой среды:
+    - Плата LicheePi 4A тестировалась на изолированной машине через монитор, подключенный по HDMI. Ethernet-кабель был физически отключен для исключения сетевых помех.
+    - Плата Banana Pi BPI-F3 тестировалась через маленькую локальную сеть (подключение через роутер), изолированную от общей внешней сети.
+2. Использование `taskset`:
+    В Bash-скрипт было добавлено использование команды `taskset` для фиксации процессора, на котором выполнялись тесты. Это позволило минимизировать влияние планировщика задач.
+3. Исправление ошибок:
+    Были исправлены ошибки работы с памятью, допущенные в предыдущих версиях кода.
+4. Измерение времени выполнения:
+    Время работы программы теперь измерялось не через показатель `elapsed time`, а через метрику `task-clock`, которая отражает реальное время, проведенное на процессоре (CPU-time).
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/Caches%20Banana.svg)
+#### Banana vs Lichee
+
+![Banana vs Lichee Final](./../../1.benchmarks/bondar/qsort_bench/pics/Banana-Lichee.svg)
+
+#### Cache misses Lichee
+
+![Caches Lichee](./../../1.benchmarks/bondar/qsort_bench/pics/Caches%20Lichee.svg)
+
+#### Cache misses Banana
+
+![Caches Banana](./../../1.benchmarks/bondar/qsort_bench/pics/Caches%20Banana.svg)
+
+#### Анализ
+
+Был получен прекрасный гладкий график, который снова показывает незначительное преимущество платы LicheePi 4A.
+
+Также для обоих плат были тщательно измерены промахи кэша (cache misses). Как мы видим из полученных результатов:
+
+- На плате Lichee промахи растут линейно с ростом массива, отсутствуют какие либо скачки. Что и ожидаемо в связи с уже упомянутой хорошей локальностью по памяти алгоритма `quicksort`.
+- На плате Banana присутствует больше шумов и заметны сильные пики в районе 1M эл-тов, что является скорее погрешностью измерения, так как на 1М эл-тов L2 кэш уже был очень давно исчерпан.
+
+    Вероятно это связано с тем, что измерения на плате Banana проводились через локальное подключение и хоть мы и имеем меньшее кол-во поступающих пакетов при таком подключении, все равно пакеты приходят и их необходимо обрабатывать при помощи прерываний.
 
 ### Измерение влияния внешнего шума
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/taskset_vs_notaskset.svg)
+![Taskset vs no Taskset](./../../1.benchmarks/bondar/qsort_bench/pics/taskset_vs_notaskset.svg)
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/taskset-time.svg)
+![Taskset time](./../../1.benchmarks/bondar/qsort_bench/pics/taskset-time.svg)
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/Lichee-no-ethernet-misses.svg)
+![Lichee no Ethernet cache misses](./../../1.benchmarks/bondar/qsort_bench/pics/Lichee-no-ethernet-misses.svg)
 
-![eou](./../../1.benchmarks/bondar/qsort_bench/pics/Lichee-no-ethernet-context.svg)
+![Lichee no Ethernet context switches](./../../1.benchmarks/bondar/qsort_bench/pics/Lichee-no-ethernet-context.svg)
 
 Factors list:
  cache speed
@@ -262,4 +293,5 @@ Factors list:
 
 - прерывания
 - планировщик реального времени (необходимость для ядра 6.*)
--
+- многопоточность
+- nice
