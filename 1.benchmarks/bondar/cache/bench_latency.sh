@@ -22,12 +22,11 @@ while [ "$current_size" -le "$MAX_SIZE" ]; do
     size_in_kb=$(( size_in_bytes / 1024 ))
     echo "Testing with N = ${current_size} ints (~${size_in_kb} KB), K = ${K} (Total Ops = $(( current_size * K )))"
     
-    read_results=()
-    write_results=()
+    latency_results=()
 
     for (( i=1; i<=ITERATIONS; i++ )); do
         echo "Run $i of $ITERATIONS..."
-        out=$(./lat "$current_size" "$K")
+        out=$(taskset -c 1 ./lat "$current_size" "$K")
         sleep 0.1
         echo "$out"
         latency=$(echo "$out" | awk '{print $10}')

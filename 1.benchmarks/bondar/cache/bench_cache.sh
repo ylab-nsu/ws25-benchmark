@@ -27,7 +27,7 @@ while [ "$current_size" -le "$MAX_SIZE" ]; do
 
     for (( i=1; i<=ITERATIONS; i++ )); do
         echo "Run $i of $ITERATIONS..."
-        out=$(./measure "$current_size" "$K")
+        out=$(taskset -c 1 ./measure "$current_size" "$K")
         sleep 0.1
         echo "$out"
         read_ops_sec=$(echo "$out" | awk '{print $8}')
