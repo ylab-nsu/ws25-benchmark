@@ -1,43 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h>
 
-typedef struct Node {
-    long long value;
-    struct Node* next;
-} Node;
+typedef struct node {
+    int value;
+    struct node* next;
+} node_t;
 
-void measure_memory_latency(size_t N, size_t K) {
-    Node** nodes = malloc(N * sizeof(Node*));
-    if (!nodes) {
-        perror("malloc");
+void measure_memory_latency(int n, int k) {
+    node_t** nodes = (node_t**)malloc(n * sizeof(node_t*));
+    if (nodes == NULL) {
+        perror("Failed malloc");
         exit(EXIT_FAILURE);
     }
 
-    for (size_t i = 0; i < N; i++) {
-        nodes[i] = malloc(sizeof(Node));
+    for (int i = 0; i < N; i++) {
+        nodes[i] = malloc(sizeof(node_t));
+        if (nodes[i] == NULL) {
+            perror("Failed malloc");
+            exit(EXIT_FAILURE);
+        }
         nodes[i]->value = i;
     }
 
     srand(time(NULL));
-    for (size_t i = 0; i < N; i++) {
-        size_t j = rand() % N;
+    for (int i = 0; i < n; i++) {
+        int j = rand() % N;
         nodes[i]->next = nodes[j];
     }
 
-    Node* p0 = nodes[0];
-    for (size_t i = 0; i < N; i++) {
+    node_t* p0 = nodes[0];
+    for (int i = 0; i < n; i++) {
         volatile int sink = p0->value;
         p0 = p0->next;
     }
 
-    Node* p = nodes[0];
-    struct timespec start, end;
+    node_t* p = nodes[0];
+    struct timespec start;
+    struct timespec end;
     volatile long long sink;
     clock_gettime(CLOCK_MONOTONIC, &start);
 
-    for (size_t t = 0; t < K * N; t++) {
+    for (int t = 0; t < k * n; t++) {
         sink = p->value;
         p = p->next;
     }
@@ -45,18 +49,18 @@ void measure_memory_latency(size_t N, size_t K) {
     clock_gettime(CLOCK_MONOTONIC, &end);
 
     double elapsed =
-        (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
+        (end.tv_sec - start.tv_sec) + ((end.tv_nsec - start.tv_nsec) / 1e9);
 
     printf("Pointer-Chasing-Latency: ");
-    printf("N %zu ", N);
-    printf("Total-Accesses: %zu ", K * N);
+    printf("N %d ", n);
+    printf("Total-Accesses: %d ", k * n);
     printf("Elapsed-Time: %.6f sec ", elapsed);
-    printf("Latency-per-Access: %.2f ns \n", (elapsed * 1e9) / (K * N));
+    printf("Latency-per-Access: %.2f ns \n", (elapsed * 1e9) / (k * n));
 
-    for (size_t i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
         free(nodes[i]);
     }
-    free(nodes);
+    free((void*)nodes);
 }
 
 int main(int argc, char* argv[]) {
@@ -65,10 +69,10 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    size_t N = atol(argv[1]);
-    size_t K = atol(argv[2]);
+    int n = atoi(argv[1]);
+    int k = atoi(argv[2]);
 
-    measure_memory_latency(N, K);
+    measure_memory_latency(n, k);
 
-    return 0;
+    exit(EXIT_SUCCESS);
 }
