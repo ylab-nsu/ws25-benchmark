@@ -4,14 +4,14 @@
 #include <unistd.h>
 
 typedef struct Node {
-    long long value; 
-    struct Node *next;
+    long long value;
+    struct Node* next;
 } Node;
 
-void measure_read_bandwidth(size_t N, size_t K, Node **nodes) {
-    volatile long long sink = 0; 
+void measure_read_bandwidth(size_t N, size_t K, Node** nodes) {
+    volatile long long sink = 0;
     struct timespec start, end;
-    Node *p = nodes[0];
+    Node* p = nodes[0];
 
     clock_gettime(CLOCK_MONOTONIC, &start);
 
@@ -22,18 +22,18 @@ void measure_read_bandwidth(size_t N, size_t K, Node **nodes) {
 
     clock_gettime(CLOCK_MONOTONIC, &end);
 
-    double elapsed = (end.tv_sec - start.tv_sec) +
-        (end.tv_nsec - start.tv_nsec) / 1e9;
+    double elapsed =
+        (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
     printf("Read-Bandwidth: ");
     printf("N %zu elapsed-time %.6f sec ", N, elapsed);
     printf("ops-sec %f ", K * N / elapsed / 1e6);
 }
 
-void measure_write_bandwidth(size_t N, size_t K, Node **nodes) {
+void measure_write_bandwidth(size_t N, size_t K, Node** nodes) {
     volatile long long sink = 42LL;
     struct timespec start, end;
-    Node *p = nodes[0];
+    Node* p = nodes[0];
 
     clock_gettime(CLOCK_MONOTONIC, &start);
 
@@ -44,15 +44,15 @@ void measure_write_bandwidth(size_t N, size_t K, Node **nodes) {
 
     clock_gettime(CLOCK_MONOTONIC, &end);
 
-    double elapsed = (end.tv_sec - start.tv_sec) +
-        (end.tv_nsec - start.tv_nsec) / 1e9;
+    double elapsed =
+        (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
     printf("Write-Bandwidth: ");
     printf("N %zu elapsed-time %.6f sec ", N, elapsed);
     printf("ops-sec %f", K * N / elapsed / 1e6);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <N> <K>\n", argv[0]);
         return EXIT_FAILURE;
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     size_t N = atol(argv[1]);
     size_t K = atol(argv[2]);
 
-    Node **nodes = malloc(N * sizeof(Node *));
+    Node** nodes = malloc(N * sizeof(Node*));
     for (size_t i = 0; i < N; i++) {
         nodes[i] = malloc(sizeof(Node));
         nodes[i]->value = (long long)i;
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
         nodes[i]->next = nodes[j];
     }
 
-    Node *p = nodes[0];
+    Node* p = nodes[0];
     for (size_t i = 0; i < N; i++) {
         volatile int sink = p->value;
         p = p->next;
@@ -94,7 +94,6 @@ int main(int argc, char *argv[]) {
         free(nodes[i]);
     }
     free(nodes);
-
 
     return 0;
 }

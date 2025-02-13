@@ -3,28 +3,28 @@
 #include <time.h>
 #include <unistd.h>
 
-void measure_read_bandwidth(size_t N, size_t K, int *a) {
+void measure_read_bandwidth(size_t N, size_t K, int* a) {
     volatile long sink = 0;
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
 
     for (size_t t = 0; t < K; t++) {
         for (size_t i = 0; i < N; i++) {
-            sink = a[i]; 
+            sink = a[i];
         }
     }
 
     clock_gettime(CLOCK_MONOTONIC, &end);
 
-    double elapsed = (end.tv_sec - start.tv_sec) +
-                     (end.tv_nsec - start.tv_nsec) / 1e9;
+    double elapsed =
+        (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
     printf("Read-Bandwidth: ");
     printf("N %zu elapsed-time %.6f sec ", N, elapsed);
     printf("ops-sec %.2f ", (K * N) / elapsed / 1e6);
 }
 
-void measure_write_bandwidth(size_t N, size_t K, int *a) {
+void measure_write_bandwidth(size_t N, size_t K, int* a) {
     volatile int sink = 42;
     struct timespec start, end;
     clock_gettime(CLOCK_MONOTONIC, &start);
@@ -37,15 +37,15 @@ void measure_write_bandwidth(size_t N, size_t K, int *a) {
 
     clock_gettime(CLOCK_MONOTONIC, &end);
 
-    double elapsed = (end.tv_sec - start.tv_sec) +
-                     (end.tv_nsec - start.tv_nsec) / 1e9;
+    double elapsed =
+        (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
     printf("Write-Bandwidth: ");
     printf("N %zu elapsed-time %.6f sec ", N, elapsed);
     printf("ops-sec %.2f", (K * N) / elapsed / 1e6);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <N> <K>\n", argv[0]);
         return EXIT_FAILURE;
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     size_t N = atol(argv[1]);
     size_t K = atol(argv[2]);
 
-    int *a = malloc(N * sizeof(int));
+    int* a = malloc(N * sizeof(int));
     if (!a) {
         perror("malloc");
         return EXIT_FAILURE;

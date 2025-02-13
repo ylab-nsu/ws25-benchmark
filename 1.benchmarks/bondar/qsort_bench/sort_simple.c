@@ -3,18 +3,15 @@
 #include <string.h>
 #include "random_data.h"
 
-void quicksort(int arr[], int low, int high)
-{
+void quicksort(int arr[], int low, int high) {
     if (low >= high)
         return;
 
     int pivot = arr[high];
     int i = low;
 
-    for (int j = low; j < high; j++)
-    {
-        if (arr[j] < pivot)
-        {
+    for (int j = low; j < high; j++) {
+        if (arr[j] < pivot) {
             int temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;
@@ -29,32 +26,33 @@ void quicksort(int arr[], int low, int high)
     quicksort(arr, i + 1, high);
 }
 
-int main(int argc, char **argv)
-{
-    if (argc != 3)
-    {
-        fprintf(stderr, "Usage: %s <M (number of cycles)> <N (number of elements to sort)>\n", argv[0]);
+int main(int argc, char** argv) {
+    if (argc != 3) {
+        fprintf(stderr,
+                "Usage: %s <M (number of cycles)> <N (number of elements to "
+                "sort)>\n",
+                argv[0]);
         return EXIT_FAILURE;
     }
 
     int M = atoi(argv[1]);
     int N = atoi(argv[2]);
 
-    if (N > BASE_ARRAY_SIZE)
-    {
-        fprintf(stderr, "Error: Number of elements to sort (N=%d) exceeds BASE_ARRAY_SIZE (%d).\n", N, BASE_ARRAY_SIZE);
+    if (N > BASE_ARRAY_SIZE) {
+        fprintf(stderr,
+                "Error: Number of elements to sort (N=%d) exceeds "
+                "BASE_ARRAY_SIZE (%d).\n",
+                N, BASE_ARRAY_SIZE);
         return EXIT_FAILURE;
     }
 
-    int *buffer = malloc(N * sizeof(int));
-    if (!buffer)
-    {
+    int* buffer = malloc(N * sizeof(int));
+    if (!buffer) {
         perror("malloc");
         return EXIT_FAILURE;
     }
 
-    for (int cycle = 0; cycle < M; cycle++)
-    {
+    for (int cycle = 0; cycle < M; cycle++) {
         memcpy(buffer, base_array, N * sizeof(int));
         quicksort(buffer, 0, N - 1);
     }

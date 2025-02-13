@@ -5,11 +5,11 @@
 
 typedef struct Node {
     long long value;
-    struct Node *next;
+    struct Node* next;
 } Node;
 
 void measure_memory_latency(size_t N, size_t K) {
-    Node **nodes = malloc(N * sizeof(Node *));
+    Node** nodes = malloc(N * sizeof(Node*));
     if (!nodes) {
         perror("malloc");
         exit(EXIT_FAILURE);
@@ -26,25 +26,26 @@ void measure_memory_latency(size_t N, size_t K) {
         nodes[i]->next = nodes[j];
     }
 
-    Node *p0 = nodes[0];
+    Node* p0 = nodes[0];
     for (size_t i = 0; i < N; i++) {
         volatile int sink = p0->value;
         p0 = p0->next;
     }
 
-    Node *p = nodes[0];
+    Node* p = nodes[0];
     struct timespec start, end;
+    volatile long long sink;
     clock_gettime(CLOCK_MONOTONIC, &start);
 
     for (size_t t = 0; t < K * N; t++) {
-        volatile long long sink = p->value; 
-        p = p->next;    
+        sink = p->value;
+        p = p->next;
     }
 
     clock_gettime(CLOCK_MONOTONIC, &end);
 
-    double elapsed = (end.tv_sec - start.tv_sec) +
-                     (end.tv_nsec - start.tv_nsec) / 1e9;
+    double elapsed =
+        (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
 
     printf("Pointer-Chasing-Latency: ");
     printf("N %zu ", N);
@@ -58,7 +59,7 @@ void measure_memory_latency(size_t N, size_t K) {
     free(nodes);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <N> <K>\n", argv[0]);
         return EXIT_FAILURE;
