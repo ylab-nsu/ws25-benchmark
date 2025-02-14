@@ -1,22 +1,29 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "random_data.h"
 
-void scramble(int* array, int size, int cycle_index) {
-    for (int index = 0; index < size; index++) {
-        unsigned int seed = (cycle_index * 0x5bd1e995) + (index * 0xdeadbeef);
-        seed ^= (seed >> 16);
+const unsigned int SCRAMBLE_CONSTANT_1 = 0x5bd1e995U;
+const unsigned int SCRAMBLE_CONSTANT_2 = 0xdeadbeefU;
+const unsigned int SCRAMBLE_CONSTANT_3 = 0x9e3779b9U;
+const int SEED_SHIFT = 16;
+const int INT_BITS = 32;
+const int ROTATION_BITS = 3;
 
-        array[index] ^= seed;
-        array[index] = (array[index] << 3) | (array[index] >> (32 - 3));
-        array[index] += (seed ^ 0x9e3779b9);
+void scramble(int cycle_index, int* array, int size) {
+    for (int index = 0; index < size; index++) {
+        unsigned int seed = (cycle_index * SCRAMBLE_CONSTANT_1) + (index * SCRAMBLE_CONSTANT_2);
+        seed ^= (seed >> SEED_SHIFT);
+
+        array[index] = (int)((unsigned int)array[index] ^ seed);
+        array[index] = (int)(((unsigned int)array[index] << ROTATION_BITS) | ((unsigned int)array[index] >> (INT_BITS - ROTATION_BITS)));
+        array[index] = (int)((unsigned int)array[index] + (seed ^ SCRAMBLE_CONSTANT_3));
     }
 }
 
 void quicksort(int array[], int low_index, int high_index) {
-    if (low_index >= high_index)
+    if (low_index >= high_index) {
         return;
+    }
 
     int pivot_value = array[high_index];
     int partition_index = low_index;
@@ -64,7 +71,7 @@ int main(int argc, char** argv) {
     }
 
     for (int cycle_index = 0; cycle_index < num_cycles; cycle_index++) {
-        scramble(buffer, num_elements, cycle_index);
+        scramble(cycle_index, buffer, num_elements);
         quicksort(buffer, 0, num_elements - 1);
     }
 

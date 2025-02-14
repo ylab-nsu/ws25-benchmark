@@ -4,8 +4,9 @@
 #include "random_data.h"
 
 void quicksort(int array[], int low_index, int high_index) {
-    if (low_index >= high_index)
+    if (low_index >= high_index) {
         return;
+    }
 
     int pivot = array[high_index];
     int partition_index = low_index;

@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/mman.h>
 #include "random_data.h"
 
 void quicksort(short array[], int low_index, int high_index) {
-    if (low_index >= high_index)
+    if (low_index >= high_index) {
         return;
+    }
 
     short pivot_value = array[high_index];
     int partition_index = low_index;

@@ -12,18 +12,18 @@ void measure_read_bandwidth(int num_elements, int num_cycles,
     volatile int sink = 0;
     struct timespec start_time;
     struct timespec end_time;
-    clock_gettime(CLOCK_MONOTONIC, &start_time);
 
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
     for (int cycle_index = 0; cycle_index < num_cycles; cycle_index++) {
         for (int index = 0; index < num_elements; index++) {
             sink = data_array[index];
         }
     }
-
     clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-    double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
-                          ((end_time.tv_nsec - start_time.tv_nsec) / BILL);
+    double elapsed_time =
+        ((double)(end_time.tv_sec - start_time.tv_sec)) +
+        (((double)(end_time.tv_nsec - start_time.tv_nsec)) / BILL);
 
     printf("Read-Bandwidth: ");
     printf("N %d elapsed-time %.6f sec ", num_elements, elapsed_time);
@@ -35,18 +35,18 @@ void measure_write_bandwidth(int num_elements, int num_cycles,
     volatile const int sink = 42;
     struct timespec start_time;
     struct timespec end_time;
-    clock_gettime(CLOCK_MONOTONIC, &start_time);
 
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
     for (int cycle_index = 0; cycle_index < num_cycles; cycle_index++) {
         for (int index = 0; index < num_elements; index++) {
             data_array[index] = sink;
         }
     }
-
     clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-    double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
-                          ((end_time.tv_nsec - start_time.tv_nsec) / BILL);
+    double elapsed_time =
+        ((double)(end_time.tv_sec - start_time.tv_sec)) +
+        (((double)(end_time.tv_nsec - start_time.tv_nsec)) / BILL);
 
     printf("Write-Bandwidth: ");
     printf("N %d elapsed-time %.6f sec ", num_elements, elapsed_time);
@@ -77,13 +77,7 @@ int main(int argc, char* argv[]) {
     }
 
     measure_read_bandwidth(num_elements, num_cycles, data_array);
-
-    for (int index = 0; index < num_elements; index++) {
-        data_array[index] = 0;
-    }
-
     usleep(SLEEP);
-
     measure_write_bandwidth(num_elements, num_cycles, data_array);
 
     printf("\n");
