@@ -8,99 +8,104 @@ typedef struct node {
     struct node* next;
 } node_t;
 
-void measure_read_bandwidth(int n, int k, node_t** nodes) {
-    volatile int sink = 0;
-    struct timespec start;
-    struct timespec end;
+const double BILL = 1e9;
+const double MILL = 1e6;
+const int SLEEP = 100000;
 
-    node_t* p = nodes[0];
-    clock_gettime(CLOCK_MONOTONIC, &start);
-    for (int t = 0; t < k * n; t++) {
-        sink = p->value;
-        p = p->next;
+void measure_read_bandwidth(int num_nodes, int num_cycles,
+                            node_t** node_array) {
+    volatile int sink;
+    struct timespec start_time;
+    struct timespec end_time;
+
+    node_t* current_node = node_array[0];
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
+    for (int index = 0; index < num_cycles * num_nodes; index++) {
+        sink = current_node->value;
+        current_node = current_node->next;
     }
-    clock_gettime(CLOCK_MONOTONIC, &end);
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-    double elapsed =
-        (end.tv_sec - start.tv_sec) + ((end.tv_nsec - start.tv_nsec) / 1e9);
+    double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
+                          ((end_time.tv_nsec - start_time.tv_nsec) / BILL);
 
     printf("Read-Bandwidth: ");
-    printf("N %d elapsed-time %.6f sec ", n, elapsed);
-    printf("ops-sec %f ", k * n / elapsed / 1e6);
+    printf("N %d elapsed-time %.6f sec ", num_nodes, elapsed_time);
+    printf("ops-sec %f ", (num_cycles * num_nodes) / elapsed_time / MILL);
 }
 
-void measure_write_bandwidth(int n, int k, node_t** nodes) {
-    volatile int sink = 42;
-    struct timespec start;
-    struct timespec end;
+void measure_write_bandwidth(int num_nodes, int num_cycles,
+                             node_t** node_array) {
+    volatile const int sink = 42;
+    struct timespec start_time;
+    struct timespec end_time;
 
-    node_t* p = nodes[0];
-    clock_gettime(CLOCK_MONOTONIC, &start);
-    for (int t = 0; t < k * n; t++) {
-        p->value = sink;
-        p = p->next;
+    node_t* current_node = node_array[0];
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
+    for (int index = 0; index < num_cycles * num_nodes; index++) {
+        current_node->value = sink;
+        current_node = current_node->next;
     }
-    clock_gettime(CLOCK_MONOTONIC, &end);
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-    double elapsed =
-        (end.tv_sec - start.tv_sec) + ((end.tv_nsec - start.tv_nsec) / 1e9);
+    double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
+                          ((end_time.tv_nsec - start_time.tv_nsec) / BILL);
 
     printf("Write-Bandwidth: ");
-    printf("N %d elapsed-time %.6f sec ", n, elapsed);
-    printf("ops-sec %f ", k * n / elapsed / 1e6);
+    printf("N %d elapsed-time %.6f sec ", num_nodes, elapsed_time);
+    printf("ops-sec %f ", (num_cycles * num_nodes) / elapsed_time / MILL);
 }
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <N> <K>\n", argv[0]);
-        return EXIT_FAILURE;
-    }
-
-    int n = atoi(argv[1]);
-    int k = atoi(argv[2]);
-
-    node_t** nodes = (node_t**)malloc(n * sizeof(node_t*));
-    if (nodes == NULL) {
-        perror("Failed to allocate memory for nodes array");
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < n; i++) {
-        nodes[i] = malloc(sizeof(node_t));
-        if (nodes[i] == NULL) {
-            perror("Failed to allocate memory for nodes array");
+    int num_nodes = atoi(argv[1]);
+    int num_cycles = atoi(argv[2]);
+
+    node_t** node_array = (node_t**)malloc(num_nodes * sizeof(node_t*));
+    if (node_array == NULL) {
+        perror("failed to allocate memory for node_array");
+        exit(EXIT_FAILURE);
+    }
+
+    for (int index = 0; index < num_nodes; index++) {
+        node_array[index] = malloc(sizeof(node_t));
+        if (node_array[index] == NULL) {
+            perror("failed to allocate memory for node");
             exit(EXIT_FAILURE);
         }
-        nodes[i]->value = i;
+        node_array[index]->value = index;
     }
 
     srand(time(NULL));
-    for (int i = 0; i < n; i++) {
-        int j = rand() % n;
-        nodes[i]->next = nodes[j];
+    for (int index = 0; index < num_nodes; index++) {
+        int random_index = rand() % num_nodes;
+        node_array[index]->next = node_array[random_index];
     }
 
-    node_t* p = nodes[0];
-    for (size_t i = 0; i < n; i++) {
-        volatile int sink = p->value;
-        p = p->next;
+    node_t* current_node = node_array[0];
+    for (size_t index = 0; index < num_nodes; index++) {
+        volatile int warmup_sink = current_node->value;
+        current_node = current_node->next;
     }
 
-    measure_read_bandwidth(n, k, nodes);
+    measure_read_bandwidth(num_nodes, num_cycles, node_array);
 
-    for (int i = 0; i < n; i++) {
-        nodes[i]->value = i;
+    for (int index = 0; index < num_nodes; index++) {
+        node_array[index]->value = index;
     }
 
-    usleep(100000);
+    usleep(SLEEP);
 
-    measure_write_bandwidth(n, k, nodes);
+    measure_write_bandwidth(num_nodes, num_cycles, node_array);
 
     printf("\n");
 
-    for (size_t i = 0; i < n; i++) {
-        free(nodes[i]);
+    for (size_t index = 0; index < num_nodes; index++) {
+        free(node_array[index]);
     }
-
     exit(EXIT_SUCCESS);
 }

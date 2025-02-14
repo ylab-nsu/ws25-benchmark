@@ -7,72 +7,75 @@ typedef struct node {
     struct node* next;
 } node_t;
 
-void measure_memory_latency(int n, int k) {
-    node_t** nodes = (node_t**)malloc(n * sizeof(node_t*));
-    if (nodes == NULL) {
+const double BILL = 1e9;
+
+void measure_memory_latency(int num_nodes, int num_access_cycles) {
+    node_t** node_array = (node_t**)malloc(num_nodes * sizeof(node_t*));
+    if (node_array == NULL) {
         perror("Failed malloc");
         exit(EXIT_FAILURE);
     }
 
-    for (int i = 0; i < N; i++) {
-        nodes[i] = malloc(sizeof(node_t));
-        if (nodes[i] == NULL) {
+    for (int index = 0; index < num_nodes; index++) {
+        node_array[index] = malloc(sizeof(node_t));
+        if (node_array[index] == NULL) {
             perror("Failed malloc");
             exit(EXIT_FAILURE);
         }
-        nodes[i]->value = i;
+        node_array[index]->value = index;
     }
 
     srand(time(NULL));
-    for (int i = 0; i < n; i++) {
-        int j = rand() % N;
-        nodes[i]->next = nodes[j];
+    for (int index = 0; index < num_nodes; index++) {
+        int random_index = rand() % num_nodes;
+        node_array[index]->next = node_array[random_index];
     }
 
-    node_t* p0 = nodes[0];
-    for (int i = 0; i < n; i++) {
-        volatile int sink = p0->value;
-        p0 = p0->next;
+    node_t* warmup_node = node_array[0];
+    for (int index = 0; index < num_nodes; index++) {
+        volatile int dummy_value = warmup_node->value;
+        warmup_node = warmup_node->next;
     }
 
-    node_t* p = nodes[0];
-    struct timespec start;
-    struct timespec end;
+    node_t* current_node = node_array[0];
+    struct timespec start_time;
+    struct timespec end_time;
     volatile long long sink;
-    clock_gettime(CLOCK_MONOTONIC, &start);
+    int total_accesses = num_access_cycles * num_nodes;
 
-    for (int t = 0; t < k * n; t++) {
-        sink = p->value;
-        p = p->next;
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
+    for (int index = 0; index < total_accesses; index++) {
+        sink = current_node->value;
+        current_node = current_node->next;
     }
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-    clock_gettime(CLOCK_MONOTONIC, &end);
-
-    double elapsed =
-        (end.tv_sec - start.tv_sec) + ((end.tv_nsec - start.tv_nsec) / 1e9);
+    double elapsed_time = (end_time.tv_sec - start_time.tv_sec) +
+                          ((end_time.tv_nsec - start_time.tv_nsec) / BILL);
 
     printf("Pointer-Chasing-Latency: ");
-    printf("N %d ", n);
-    printf("Total-Accesses: %d ", k * n);
-    printf("Elapsed-Time: %.6f sec ", elapsed);
-    printf("Latency-per-Access: %.2f ns \n", (elapsed * 1e9) / (k * n));
+    printf("N %d ", num_nodes);
+    printf("Total-Accesses: %d ", total_accesses);
+    printf("Elapsed-Time: %.6f sec ", elapsed_time);
+    printf("Latency-per-Access: %.2f ns \n",
+           (elapsed_time * BILL) / total_accesses);
 
-    for (int i = 0; i < n; i++) {
-        free(nodes[i]);
+    for (int index = 0; index < num_nodes; index++) {
+        free(node_array[index]);
     }
-    free((void*)nodes);
+    free((void*)node_array);
 }
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
         fprintf(stderr, "Usage: %s <N> <K>\n", argv[0]);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
 
-    int n = atoi(argv[1]);
-    int k = atoi(argv[2]);
+    int num_nodes = atoi(argv[1]);
+    int num_access_cycles = atoi(argv[2]);
 
-    measure_memory_latency(n, k);
+    measure_memory_latency(num_nodes, num_access_cycles);
 
     exit(EXIT_SUCCESS);
 }
