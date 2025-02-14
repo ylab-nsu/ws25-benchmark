@@ -11,12 +11,16 @@ const int ROTATION_BITS = 3;
 
 void scramble(int cycle_index, int* array, int size) {
     for (int index = 0; index < size; index++) {
-        unsigned int seed = (cycle_index * SCRAMBLE_CONSTANT_1) + (index * SCRAMBLE_CONSTANT_2);
+        unsigned int seed =
+            (cycle_index * SCRAMBLE_CONSTANT_1) + (index * SCRAMBLE_CONSTANT_2);
         seed ^= (seed >> SEED_SHIFT);
 
         array[index] = (int)((unsigned int)array[index] ^ seed);
-        array[index] = (int)(((unsigned int)array[index] << ROTATION_BITS) | ((unsigned int)array[index] >> (INT_BITS - ROTATION_BITS)));
-        array[index] = (int)((unsigned int)array[index] + (seed ^ SCRAMBLE_CONSTANT_3));
+        array[index] =
+            (int)(((unsigned int)array[index] << ROTATION_BITS) |
+                  ((unsigned int)array[index] >> (INT_BITS - ROTATION_BITS)));
+        array[index] =
+            (int)((unsigned int)array[index] + (seed ^ SCRAMBLE_CONSTANT_3));
     }
 }
 
