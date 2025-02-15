@@ -18,12 +18,13 @@
     Пример алгоритма Pointer Chasing:
 
     ```C
-    clock_gettime(CLOCK_MONOTONIC, &start);
-    for (size_t t = 0; t < K*N; t++) {
-        p->value = sink;
-        p = p->next;
+    for (int index = 0; index < num_cycles; index++) {
+        while (current_node != NULL) {
+            sink = current_node->value;
+            current_node = current_node->next;
+        }
+        current_node = head;
     }
-    clock_gettime(CLOCK_MONOTONIC, &end);
     ```
 
 Для измерения времени использовалась функция `clock_gettime`.
@@ -99,8 +100,8 @@ The L2 Cache has the following features:
 
 ```C
 clock_gettime(CLOCK_MONOTONIC, &start);
-for (size_t t = 0; t < K; t++) {
-    for (size_t i = 0; i < N; i++) {
+for (int t = 0; t < K; t++) {
+    for (int i = 0; i < N; i++) {
         nodes[i] = sink;
     }
 }
@@ -108,12 +109,15 @@ clock_gettime(CLOCK_MONOTONIC, &end);
 
 // Правильный Pointer Chasing:
 
-clock_gettime(CLOCK_MONOTONIC, &start);
-for (size_t t = 0; t < K*N; t++) {
-    p->value = sink;
-    p = p->next;
+clock_gettime(CLOCK_MONOTONIC, &start_time);
+for (int index = 0; index < num_cycles; index++) {
+    while (current_node != NULL) {
+        sink = current_node->value;
+        current_node = current_node->next;
+    }
+    current_node = head;
 }
-clock_gettime(CLOCK_MONOTONIC, &end);
+clock_gettime(CLOCK_MONOTONIC, &end_time);
 ```
 
 Тем не менее, мы получили на удивление красивый и гладкий график. Данный эффект требует дальнейшего изучения.
@@ -225,3 +229,10 @@ clock_gettime(CLOCK_MONOTONIC, &end);
 - Изучить более подробно влияние оптимизаций на получаемые данные.
 - Существуют хитрые "хаки" для более точных и стабильных измерений пропускной способности и задержки. Многие из таких "хаков" платформо-специфичны, поэтому может потребоваться адаптация под RISC-V.
 - Изучить более подробно возможность измерения задержек с помощью sequential acces алгоритма.
+- Измерить реальную пропускную способность в Gb/s.
+
+## Важное уточнение
+
+> Уже после завершения работы над проектом была замечена ошибка в реализации алгоритма Pointer Chasing. При генерации рандомно связанного связного списка, для рандомного связывания использовалась рандомная генерация индексов через rand(), что может создавать недостижимые ноды и циклы.
+
+> Текущая версия в репозитории - исправленная реализация. Она использует рандомную перестановку индексов для генерации связей в связном списке.
